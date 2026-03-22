@@ -16,17 +16,17 @@
 
 ## 화면 구성(Screen composition)
 
-###가계부(Household ledger)
+### 가계부(Household ledger)
 -수입/지출 입력 및 요약(Income/Expense Input and Summary)
 -달력 뷰(날짜별 내역)(Calendar View(Details by Date)
 -월별 수입/지출 요약(Monthly Income/Expense Summary)
 
-###통계(Statistics)
+### 통계(Statistics)
 -해당 월 수입 통계(Current Month Income Statistics)
 -해당 월 지출 통계(Current Month Expense Statistics
 -월 결산, 총 결산(Monthly Settlement, Total Settlement)
 
-###설정(Setting)
+### 설정(Setting)
 -글자 크기 조정(Adjust font size)
 -시작일 설정(Set start date)
 -추후 다른 기능 도입 예정(Other features to be added later)
