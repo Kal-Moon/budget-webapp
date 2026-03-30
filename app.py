@@ -1,10 +1,10 @@
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "가계부 앱 시작!"
+    return render_template("index.html")
 
 @app.route("/about")
 def introduce():
@@ -12,11 +12,15 @@ def introduce():
 
 @app.route("/stats")
 def stats():
-    return "통계"
+    return render_template("stats.html")
 
 @app.route("/settings")
 def settings():
-    return "설정"
+    return render_template("settings.html")  
+
+@app.route("/calendar")
+def calendar():
+    return render_template("calendar.html")
 
 if __name__ == "__main__":
     app.run(debug=True) 
