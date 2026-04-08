@@ -1,10 +1,48 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
+
+records = []
+
+import sqlite3
+
+def init_db():
+    conn = sqlite3.connect("budget.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS records (
+                   id       INTEGER PRIMARY KEY AUTOINCREMENT,
+                    memo    TEXT,
+                   amount   INTEGER,
+                   type TEXT,
+                    category    TEXT,
+                   date     TEXT
+                   )
+                   """)
+    conn.commit()
+    conn.close()
+
+init_db()
 
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    conn = sqlite3.connect("budget.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM records")
+    records = cursor.fetchall()
+    conn.close()
+
+    income =0 
+    expense = 0
+    for record in records:
+        if record[3] == "income":
+            income += record[2]
+        elif record[3] == "expense":
+            expense += record[2]
+    total = income - expense
+
+    return render_template("index.html", records=records,
+                           income=income, expense=expense, total=total)
 
 @app.route("/about")
 def introduce():
@@ -12,7 +50,7 @@ def introduce():
 
 @app.route("/stats")
 def stats():
-    return render_template("stats.html")
+    return render_template("stats.html")    
 
 @app.route("/settings")
 def settings():
@@ -22,5 +60,63 @@ def settings():
 def calendar():
     return render_template("calendar.html")
 
+@app.route("/monthly")
+def monthly():
+    return render_template("monthly.html")
+
+@app.route("/memo")
+def memo():
+    return render_template("memo.html")
+
+@app.route("/add", methods=["POST"])
+def add():
+    memo_text = request.form["memo"]
+    amount = request.form["amount"]
+    type_value = request.form["type"]
+
+    conn = sqlite3.connect("budget.db")
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO records (memo, amount, type) VALUES (?, ?, ?)",
+                   (memo_text, amount, type_value))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("home"))
+
+@app.route("/delete/<int:id>", methods=["POST"])
+def delete(id):
+    conn = sqlite3.connect("budget.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM records WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("home"))
+
+@app.route("/edit/<int:id>")
+def edit(id):
+    conn = sqlite3.connect("budget.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM records WHERE id =?", (id,))
+    record = cursor.fetchone()
+    conn.close()
+    return render_template("edit.html", record=record)
+
+@app.route("/update/<int:id>", methods=["POST"])
+def update(id):
+    memo_text = request.form["memo"]
+    amount = request.form["amount"]
+    type_value = request.form["type"]
+
+    conn = sqlite3.connect("budget.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+                   UPDATE records
+                   SET memo=?, amount=?, type=?
+                   WHERE id=?
+                   """, (memo_text, amount, type_value, id))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("home"))
+
 if __name__ == "__main__":
-    app.run(debug=True) 
+    app.run(debug=True)

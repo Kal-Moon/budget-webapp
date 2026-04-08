@@ -12,19 +12,44 @@
       <table>
         <tr>
             <th>수입</th>
-            <td>{{ amount }}원</td>
+            <td>{{ income }}원</td>
         </tr>
         <tr>
             <th>지출</th>
-            <td>{{ amount }}원</td>
+            <td>{{ expense }}원</td>
         </tr>
         <tr>
             <th>합계</th>
-            <td>{{ amount }}원</td>
+            <td>{{ total }}원</td>
         </tr>
       </table>
 
-        <a href="/household">가계부</a>
+      <table>
+        {% for record in records %}
+        <tr>
+            <td>{{ record[1] }}</td>
+            <td>{{ record[2] }}원</td>
+            <td>
+                <a href="/edit/{{ record[0] }}">수정</a>
+                <form action="/delete/{{ record[0] }}" method="POST">
+                    <button type="submit">삭제</button>
+            </form>
+            </td>
+        </tr>
+        {%  endfor %}
+      </table>
+
+      <form action="/add" method="POST">
+        <select name="type">
+            <option value="income">수입</option>
+            <option value="expense">지출</option>
+        </select>
+        <input type="text" name="memo" placeholder="내역 입력">
+        <input type="number" name="amount" placeholder="금액 입력">
+        <button type="submit">저장</button>
+   </form>
+
+        <a href="/">가계부</a>
         <a href="/stats">통계</a>
         <a href="/settings">설정</a>
     </body>

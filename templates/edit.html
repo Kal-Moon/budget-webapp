@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>수정</title>
+    </head>
+    <body>
+        <form action="/update/{{  record[0] }}" method="POST">
+            <select name="type">
+                <option value="income">수입</option>
+                <option value="expense">지출</option>
+            </select>
+            <input type="text" name="memo" value="{{ record[1] }}">
+            <input type="number" name="amount" value="{{ record[2] }}">
+            <button type="submit">저장</button>
+        </form>
+    </body>
+</html>
