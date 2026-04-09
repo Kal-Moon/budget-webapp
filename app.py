@@ -17,6 +17,20 @@ def init_db():
                    date     TEXT
                    )
                    """)
+    cursor.execute("""
+                   CREATE TABLE IF NOT EXISTS categories(
+                   id   INTEGER PRIMARY KEY,
+                   name TEXT)
+                   """)
+    
+    cursor.execute("INSERT OR IGNORE INTO categories (id, name) VALUES (1, '식비')")
+    cursor.execute("INSERT OR IGNORE INTO categories (id, name) VALUES (2, '교통/차량')")
+    cursor.execute("INSERT OR IGNORE INTO categories (id, name) VALUES (3, '패션/미용')")
+    cursor.execute("INSERT OR IGNORE INTO categories (id, name) VALUES (4, '주거/통신')")
+    cursor.execute("INSERT OR IGNORE INTO categories (id, name) VALUES (5, '건강')")
+    cursor.execute("INSERT OR IGNORE INTO categories (id, name) VALUES (6, '교육')")
+    cursor.execute("INSERT OR IGNORE INTO categories (id, name) VALUES (7, '생활용품')")
+    
     conn.commit()
     conn.close()
 
@@ -30,6 +44,9 @@ def home():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM records")
     records = cursor.fetchall()
+    cursor.execute("SELECT * FROM categories")
+    categories = cursor.fetchall()
+
     conn.close()
 
     income =0 
@@ -41,7 +58,7 @@ def home():
             expense += record[2]
     total = income - expense
 
-    return render_template("index.html", records=records,
+    return render_template("index.html", records=records, categories=categories,
                            income=income, expense=expense, total=total)
 
 @app.route("/about")
@@ -73,11 +90,12 @@ def add():
     memo_text = request.form["memo"]
     amount = request.form["amount"]
     type_value = request.form["type"]
-
+    category_id = request.form["category"]
+  
     conn = sqlite3.connect("budget.db")
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO records (memo, amount, type) VALUES (?, ?, ?)",
-                   (memo_text, amount, type_value))
+    cursor.execute("INSERT INTO records (memo, amount, type, category) VALUES (?, ?, ?, ?)",
+                   (memo_text, amount, type_value, category_id))
     conn.commit()
     conn.close()
 

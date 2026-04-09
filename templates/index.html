@@ -44,6 +44,11 @@
             <option value="income">수입</option>
             <option value="expense">지출</option>
         </select>
+        <select name="category">
+            {% for category in categories %}
+                <option value="{{ category[0] }}">{{ category[1] }}</option>
+            {% endfor %}
+        </select>
         <input type="text" name="memo" placeholder="내역 입력">
         <input type="number" name="amount" placeholder="금액 입력">
         <button type="submit">저장</button>
